@@ -15,7 +15,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
-
+import { getLessonList } from './redux'
 import "./index.less";
 
 dayjs.extend(relativeTime);
@@ -27,7 +27,9 @@ dayjs.extend(relativeTime);
     //   state.course.permissionValueList,
     //   "Course"
     // )
-  })
+    chapterList: state.chapterList
+  }),
+  { getLessonList }
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -53,7 +55,7 @@ class Chapter extends Component {
     });
   };
 
-  componentDidMount() {
+  componentDidMount () {
     // const { page, limit } = this.state;
     // this.handleTableChange(page, limit);
   }
@@ -84,13 +86,23 @@ class Chapter extends Component {
       });
   };
 
-  onSelectChange = (selectedRowKeys) => {
+  onSelectChange = selectedRowKeys => {
     this.setState({
-      selectedRowKeys,
-    });
-  };
+      selectedRowKeys
+    })
+  }
 
-  render() {
+  // handleClickExpand ray 定义的点击展开按钮的事件处理函数
+  handleClickExpand = (expand, record) => {
+    console.log(expand, record)
+    // console.log(expand)
+    if (expand) {
+      // 发送请求获取数据
+      this.props.getLessonList(record._id)
+    }
+  }
+
+  render () {
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
 
     const columns = [
@@ -101,7 +113,7 @@ class Chapter extends Component {
       {
         title: "是否免费",
         dataIndex: "free",
-        render: (isFree) => {
+        render: isFree => {
           return isFree === true ? "是" : isFree === false ? "否" : "";
         },
       },
@@ -109,7 +121,7 @@ class Chapter extends Component {
         title: "操作",
         width: 300,
         fixed: "right",
-        render: (data) => {
+        render: data => {
           if ("free" in data) {
             return (
               <div>
@@ -290,8 +302,11 @@ class Chapter extends Component {
           <Table
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={data}
+            dataSource={this.props.chapterList.items}
             rowKey="id"
+            expandable={{
+              onExpand: this.handleClickExpand
+            }}
           />
         </div>
 
