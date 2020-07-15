@@ -8,14 +8,24 @@ const BASE_URL = '/admin/edu/chapter'
 
 
 // 获取所有课程数据
-export function reqGetCourseList ({ page, limit, courseId }) {
+export function reqGetChapterList ({ page, limit, courseId }) {
   // request返回一个promise
   return request({
     url: `${BASE_URL}/${page}/${limit}`,
-    // http://localhost:8888/admin/edu/subject/1/10
     method: 'GET',
     params: {
       courseId
+    }
+  })
+}
+// 批量删除章节数据
+export function reqBatchDelChapter (chapterIds) {
+  // request返回一个promise
+  return request({
+    url: `${BASE_URL}/batchRemove`,
+    method: 'DELETE',
+    data: {
+      idList: chapterIds
     }
   })
 }
